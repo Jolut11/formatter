@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1></h1>
+
+<p>Paraclinicos a formatear.</p>
+
+<textarea id="textToParse" name="textToParse" rows="4" cols="80">
+</textarea>
+
+<p>Paraclinicos formateados.</p>
+
+<textarea id="parsedText" name="parsedText" rows="15" cols="80" disabled>
+</textarea>
+
+<br>
+
+<button onclick="format()">Formatear y copiar</button>
+
+<br>
+
+<script>
+	function copy() {
+		var txt = document.getElementById("parsedText")
+		txt.disabled = false
+		txt.select()
+		document.execCommand("copy")
+		txt.disabled = true
+	}
+
+	function format() {
+
+		var dict = {
+				"HEMOGRAMADEIVGENERACIONHEMOGRAMACONDIFERENCIAL" : ["", "CH:"],
+				"RECUENTODEPLAQUETAS[MANUAL]RECUENTODEPLAQUETASMANUAL" : ["mm", "RMP"],
+				"TIEMPODEPROTROMBINA-PTTIEMPODEPROTROMBINA-PT" : ["Seg", "PT"],
+				"I.N.R." : ["TIEMPO", "INR"],
+				"TIEMPOPARCIALDETROMBOPLASTINA-PTTTIEMPOPARCIALDETROMBOPLASTINA-PTT" : ["Seg", "PTT"],
+				"SODIOENSUEROSODIOENSUERO" : ["mmol", "SODIO"],
+				"POTASIOENSUEROPOTASIOENSUERO" : ["mmol", "POTASIO"],
+				"CLOROENSANGRECLOROENSUERO" : ["mmol", "CLORO"],
+				"CALCIOCALCIO" : ["mg", "CALCIO"],
+				"CALCIOAUTOMATIZADOCALCIO" : ["mg", "CALCIO"],
+				"MAGNESIOMAGNESIO" : ["mg", "MAGNESIO"],
+				"FOSFOROENSUEROFOSFOROENSUERO" : ["mg", "FOSFORO"],
+				"SODIOENORINAESPONTANEASODIOENORINAESPONTANEA" : ["mmol", "NA URINARIO"],
+				"CREATININAENSUEROCREATININA" : ["mg", "CREAT"],
+				"NITROGENOUREICOENSUERONITROGENOUREICOENSUERO" : ["mg", "BUN"],
+				"UREAUREA" : ["mg", "UREA"],
+				"GLUCOSAGLUCOSA" : ["mg", "GLUCOSA"],
+				"HEMOGLOBINAGLICOSILADAPORANTICUERPOSMONOCLONALESHEMOGLOBINAGLICOSILADA" : ["%", "HBA1C"],
+				"HEMOGLOBINAGLICOSILADA(FRACCIONA1C)HEMOGLOBINAGLICOSILADA(FRACCIONA1C)" : ["%", "HBA1C"],
+				"CUERPOSCETONICOSENSANGRECUERPOCETONICOSENSANGRE" : ["mg", "CETONEMIA"],
+				"TROPONINAIDEALTASENSIBILIDAD(TNIH)RESULTADO:" : ["ng", "TROPONINA I"],
+				"TROPONINAIDEALTASENSIBILIDAD(TNIH)TROPONINAIDEALTASENSIBILIDAD(TNIH)" : ["ng", "TROPONINA I"],
+				"PROBNP(PEPTIDOCEREBRALNATRIURETICO)PROBNP(PEPTIDOCEREBRALNATRIURETICO)" : ["pg", "PROBNP"],
+				"FIBRINOGENOFIBRINOGENO" : ["mg", "FIBRINOGENO"],
+				"BILIRRUBINATOTALYDIRECTABILIRUBINATOTALYDIRECTA" : ["", ""],
+				"TRANSAMINASAGLUTAMICOOXALACETICA(AST-GOT)TRANSAMINASAGLUTAMICOOXALACETICA-AST" : ['U\n', "AST"],
+				"TRANSAMINASAGLUTAMICOPIRÚVICA(ALT-GPT)TRANSAMINASAGLUTAMICOPIRUVICA-ALT" : ["U\n", "ALT"],
+				"FOSFATASAALCALINAFOSFATASAALCALINA" : ["U", "F/ALCA"],
+				"LIPASALIPASA" : ["U", "LIPASA"],
+				"AMILASAAMILASA" : ["U", "AMILASA"],
+				"ALBUMINAALBUMINA" : ["gr", "ALBÚMINA"],
+				"PROTEINACREACTIVADEALTASENSIBILIDADPROTEINACREACTIVAULTRASENSIBLE" : ["mg", "PCR"],
+				"PROTEINACREACTIVAPROTEINACREACTIVA" : ["mg", "PCR"],
+				"PROTEINACREACTIVAALTAPRECISIONPROTEINACREACTIVAALTAPRECISION" : ["mg", "PCR"],
+				"PROCALCITONINAPROCALCITONINA" : ["ng", "PROCALCITONINA"],
+				"ERITROSEDIMENTACIÓN(AUTOMATIZADA)VSGERITROSEDIMENTACIÓNVSG" : ["mm", "VSG"],
+				"DIMERODDIMEROD" : ["mg", "DIMERO D"],
+				"HORMONATIROIDEOESTIMULANTETSHHORMONATIROIDEOESTIMULANTETSH" : ["uIU", "TSH"],
+				"HORMONATIROIDEOESTIMULANTETSH3-ULTRAHORMONATIROIDEOESTIMULANTETSH3-ULTRA" : ["uIU", "TSH"],
+				"T3LIBRE(TRIYODOTIRONINALIBRE)T3LIBRE(TRIYODOTIRONINALIBRE)" : ["pg", "T3L"],
+				"HORMONATIROIDEOESTIMULANTETSH3-ULTRAHORMONATIROIDEOESTIMULANTETSH3-ULTRA" : ["pg", "T3L"],
+				"T4L-TIROXINALIBRET4LIBRE" : ["ng", "T4L"],
+				"COLESTEROLTOTALCOLESTEROLTOTAL" : ["mg", "CT"],
+				"COLESTEROLDEALTADENSIDAD-HDLCOLESTEROLDEALTADENSIDAD-HDL" : ["mg", "HDL"],
+				"COLESTEROLDEBAJADENSIDAD-LDLENZIMÁTICOCOLESTEROLDEBAJADENSIDAD-LDL" : ["mg", "LDL"],
+				"COLESTEROLDEBAJADENSIDAD-LDLCOLESTEROLDEBAJADENSIDAD-LDL" : ["mg", "LDL"],
+				"TRIGLICERIDOSTRIGLICÉRIDOS" : ["mg", "TRIG"],
+				"MENU" : ["MENU", "MENU"],
+		};
+
+		var str = document.getElementById("textToParse").value.replace(/\s+/g, "").replace(",", ".")
+		
+		//SE SEPARA LA FECHA
+		var strFinal = str.substring(str.indexOf("FechadeIngreso:") + 15, str.indexOf("No.", str.indexOf("FechadeIngreso:"))) + "\n";
+
+		for (let key in dict){
+			if (str.includes(key)){
+				if (key === "HEMOGRAMADEIVGENERACIONHEMOGRAMACONDIFERENCIAL"){
+					var leu = str.substring(str.indexOf("RecuentodeLeucocitos") + 20, str.indexOf("x10^3", str.indexOf("RecuentodeLeucocitos")))
+					var neu = str.substring(str.indexOf("PolimorfoNuclearesNeutrófilos") + 29, str.indexOf("x10^3", str.indexOf("PolimorfoNuclearesNeutrófilos")))
+					var neuPercent = str.substring(str.indexOf("%PolimorfoNuclearesNeutrofilo") + 29, str.indexOf("%", str.indexOf("%PolimorfoNuclearesNeutrofilo") + 1))
+					var hb = str.substring(str.indexOf("Hemoglobina") + 11, str.indexOf("gr", str.indexOf("Hemoglobina")))
+					var vcm = str.substring(str.indexOf("MCV(VolumenCorpuscularMedio)") + 28, str.indexOf("fL", str.indexOf("MCV(VolumenCorpuscularMedio)")))
+					var hcm = str.substring(str.indexOf("MCH(HemoglobinaCorpuscularMedio)") + 32, str.indexOf("pg", str.indexOf("MCH(HemoglobinaCorpuscularMedio)")))
+					var htco = str.substring(str.indexOf("Hematocrito") + 11, str.indexOf("%", str.indexOf("Hematocrito")))
+					var plaq = str.substring(str.indexOf("RecuentodePlaquetas") + 19, str.indexOf("x10^3", str.indexOf("RecuentodePlaquetas")))
+					strFinal = strFinal + dict[key][1]
+						+ " LEU " + Math.round(parseFloat(leu)*1000) + ","
+						+ " NEU " + Math.round(parseFloat(neu)*1000) + " (" + neuPercent + "%)" + ","
+						+ " HB " + hb + ","
+						+ " VCM " + vcm + ","
+						+ " HCM " + hcm + ","
+						+ " HTCO " + htco + ","
+						+ " PLAQ " + Math.round(parseFloat(plaq)*1000)
+						+ "\n";
+					continue;
+				}
+				if (key === "BILIRRUBINATOTALYDIRECTABILIRUBINATOTALYDIRECTA"){
+					var btot = str.substring(str.indexOf("BILIRRUBINATOTAL") + 63, str.indexOf("mg", str.indexOf("BILIRRUBINATOTAL")))
+					var bdir = str.substring(str.indexOf("BILIRRUBINADIRECTA") + 18, str.indexOf("mg", str.indexOf("BILIRRUBINADIRECTA")))
+					var bind = str.substring(str.indexOf("BILIRRUBINAINDIRECTA") + 20, str.indexOf("mg", str.indexOf("BILIRRUBINAINDIRECTA")))
+					strFinal = strFinal
+						+ "BTOT " + btot + ","
+						+ " BDIR " + bdir + ","
+						+ " BIND " + bind
+						+ "\n";
+					continue;
+				}
+				if (key === "MENU"){
+					str = document.getElementById("textToParse").value.replace(/[\n\r\t]/gm, " ").replace(",", ".").replace("?", "ño").replace(/( )\1+/g, '$1')
+					var name = str.substring(str.indexOf("PACIENTE PACIENTE") + 18, str.indexOf("IDENTIFICACION ") - 1)
+					var doc = str.substring(str.indexOf("IDENTIFICACION") + 15, str.indexOf("SEXO ") - 1)
+					var edad = str.substring(str.indexOf("Edad: ") + 6, str.indexOf("años") - 1) + " AÑOS"
+					var ingreso = 'FI:' + str.substring(str.indexOf("FECHA INGRESO") + 13, str.indexOf("TIEMPO HOSP") - 1)
+
+					var eps = '#####'
+
+					if (str.includes('POLICIA-REGIONAL')) {eps = "PONAL"}
+					if (str.includes('SOAT')) {eps = "SOAT"}
+					if (str.includes('FOMAG')) {eps = "FOMAG"}
+					if (str.includes('MEDICO BUCARAMANGA')) {eps = "SANIDAD MILITAR"}
+					if (str.includes('SANITAS EPS')) {eps = "SANITAS EPS"}
+					if (str.includes('SALUD TOTAL')) {eps = "SALUD TOTAL"}
+					if (str.includes('COMFAORIENTE')) {eps = "COMFAORIENTE"}
+					if (str.includes('COOSALUD')) {eps = "COOSALUD"}
+					if (str.includes('NUEVA EPS')) {eps = "NUEVA EPS"}
+					
+					if (str.includes('CONTRIBUTIVO') || str.includes('EPS-C')){
+							eps = eps + " CONTRIBUTIVO"
+					}
+					if (str.includes('SUBSIDIADO') || str.includes('EPS-S')){
+							eps = eps + " SUBSIDIADO"
+					}
+
+					strFinal = name + "\n" + doc + "\n" + edad + "\n" + eps + "\n" + ingreso + "\n\n\n"
+
+					continue;
+				}
+
+				//CREAR UNA NUEVA CADENA QUE EMPIECE POR LA KEY
+				var splitedStr = str.split(key)[1]
+				//OBTENER EL PRIMER CARACTER DESPUES DE LA KEY
+				var firstChar = splitedStr.match("[a-zA-Z\%]")
+				var indexOfFirstChar = str.indexOf(firstChar, str.indexOf(key) + key.length)
+				strFinal = strFinal + dict[key][1] + " " + str.substring(str.indexOf(key) + key.length, indexOfFirstChar) + "\n";
+			}
+		}
+		document.getElementById("parsedText").innerHTML = strFinal
+		document.getElementById("textToParse").value = ""
+		copy()
+	}
+</script>
+
+</body>
+</html>
