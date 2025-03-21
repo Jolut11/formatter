@@ -71,6 +71,7 @@
 				"DIMERODDIMEROD" : ["mg", "DIMERO D"],
 				"HORMONATIROIDEOESTIMULANTETSHHORMONATIROIDEOESTIMULANTETSH" : ["uIU", "TSH"],
 				"HORMONATIROIDEOESTIMULANTETSH3-ULTRAHORMONATIROIDEOESTIMULANTETSH3-ULTRA" : ["uIU", "TSH"],
+				"HORMONATIROIDEOESTIMULANTETSH3-ULTRAHORMONATIROIDEOESTIMULANTETSH" : ["uIU", "TSH"],
 				"T3LIBRE(TRIYODOTIRONINALIBRE)T3LIBRE(TRIYODOTIRONINALIBRE)" : ["pg", "T3L"],
 				"HORMONATIROIDEOESTIMULANTETSH3-ULTRAHORMONATIROIDEOESTIMULANTETSH3-ULTRA" : ["pg", "T3L"],
 				"T4L-TIROXINALIBRET4LIBRE" : ["ng", "T4L"],
@@ -80,6 +81,7 @@
 				"COLESTEROLDEBAJADENSIDAD-LDLCOLESTEROLDEBAJADENSIDAD-LDL" : ["mg", "LDL"],
 				"TRIGLICERIDOSTRIGLICÉRIDOS" : ["mg", "TRIG"],
 				"MENU" : ["MENU", "MENU"],
+				"GASESARTIERIALESGASESARTIERIALES" : ["", "GA: "],
 		};
 
 		var str = document.getElementById("textToParse").value.replace(/\s+/g, "").replace(",", ".")
@@ -106,6 +108,28 @@
 						+ " HCM " + hcm + ","
 						+ " HTCO " + htco + ","
 						+ " PLAQ " + Math.round(parseFloat(plaq)*1000)
+						+ "\n";
+					continue;
+				}
+				if (key === "GASESARTIERIALESGASESARTIERIALES"){
+					var fio2 = str.substring(str.indexOf("FIO2") + 4, str.indexOf("ELECTROLITOS", str.indexOf("FIO2")))
+					var so2 = str.substring(str.indexOf("SO2") + 3, str.indexOf("%", str.indexOf("SO2")))
+					var ph = str.substring(str.indexOf("PH") + 2, str.indexOf("SO2", str.indexOf("PH")))
+					var po2 = str.substring(str.indexOf("PO2") + 3, str.indexOf("mmHg", str.indexOf("PO2")))
+					var pco2 = str.substring(str.indexOf("PCO2") + 4, str.indexOf("mmHg", str.indexOf("PCO2")))
+					var hco3 = str.substring(str.indexOf("cHCO3") + 5, str.indexOf("mmol", str.indexOf("cHCO3")))
+					var be = str.substring(str.indexOf("BE") + 2, str.indexOf("mmol", str.indexOf("BE")))
+					var pafi = str.substring(str.indexOf("IndiceP/F") + 9, str.indexOf("mmHg", str.indexOf("IndiceP/F")))
+					
+					strFinal = strFinal + dict[key][1]
+						+ " FIO2 " + fio2 + ","
+						+ " SO2 " + so2 + ","
+						+ " PH " + ph + ","
+						+ " PO2 " + po2 + ","
+						+ " PCO2 " + pco2 + ","
+						+ " HCO3 " + hco3 + ","
+						+ " BE " + be + ","
+						+ " PAFI " + pafi
 						+ "\n";
 					continue;
 				}
