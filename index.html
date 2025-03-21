@@ -82,6 +82,7 @@
 				"TRIGLICERIDOSTRIGLICÉRIDOS" : ["mg", "TRIG"],
 				"MENU" : ["MENU", "MENU"],
 				"GASESARTIERIALESGASESARTIERIALES" : ["", "GA: "],
+				"CULTIVOGERMENESCOMUNES" : ["", "CULTIVO "],
 		};
 
 		var str = document.getElementById("textToParse").value.replace(/\s+/g, "").replace(",", ".")
@@ -130,6 +131,29 @@
 						+ " HCO3 " + hco3 + ","
 						+ " BE " + be + ","
 						+ " PAFI " + pafi
+						+ "\n";
+					continue;
+				}
+				if (key === "CULTIVOGERMENESCOMUNES"){
+					str = document.getElementById("textToParse").value.replace(/[\n\r\t]/gm, " ").replace(",", ".").replace("?", "ño").replace(/( )\1+/g, '$1')
+
+					var muestra = str.substring(str.indexOf("Muestra:") + 8, str.indexOf("Resultado:", str.indexOf("Muestra:")))
+					var germen = ""
+					var antibiograma = ""
+
+					if (str.includes("Gérmen 1:"))	{
+						germen = str.substring(str.indexOf("Gérmen 1:") + 10, str.indexOf("****", str.indexOf("Gérmen 1:")))
+						antibiograma = str.substring(str.indexOf(" **** ********** ") + 17, str.indexOf("Validado por", str.indexOf(" **** ********** ")))
+						antibiograma = antibiograma.replaceAll("(R) ", "(R)\n").replaceAll("(S) ", "(S)\n").replaceAll("(-) ", "(-)\n")
+					}
+					else {
+						antibiograma = str.substring(str.indexOf(" Resultado:") + 11, str.indexOf("Validado por", str.indexOf(" Resultado:")))
+					}
+
+					strFinal = strFinal + dict[key][1]
+						+ muestra + "\n"
+						+ germen + "\n"
+						+ antibiograma
 						+ "\n";
 					continue;
 				}
