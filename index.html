@@ -143,7 +143,7 @@
 
 					if (str.includes("Gérmen 1:"))	{
 						germen = str.substring(str.indexOf("Gérmen 1:") + 10, str.indexOf("****", str.indexOf("Gérmen 1:")))
-						antibiograma = str.substring(str.indexOf(" **** ********** ") + 17, str.indexOf("Validado por", str.indexOf(" **** ********** ")))
+						antibiograma = str.substring(str.lastIndexOf("***") + 3, str.indexOf("Validado por", str.lastIndexOf("***")))
 						antibiograma = antibiograma.replaceAll("(R) ", "(R)\n").replaceAll("(S) ", "(S)\n").replaceAll("(-) ", "(-)\n")
 					}
 					else {
